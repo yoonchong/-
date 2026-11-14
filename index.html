@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>행운번호 뽑기</title>
+<meta name="description" content="꿈, 생년월일, 오늘의 기분으로 재미있게 뽑는 로또 번호 생성기">
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#ffffff; --text:#1d1d1f; --muted:#6b6b70; --line:#e6e2d8;
+    --accent:#d4532b; --accent-ink:#ffffff;
+    --b1:#f2b600; --b2:#3d8bfd; --b3:#e5484d; --b4:#8b8d98; --b5:#30a46c;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#141416; --card:#1f1f23; --text:#f2f2f4; --muted:#9a9aa2; --line:#2e2e34; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+    line-height:1.5}
+  .wrap{max-width:520px;margin:0 auto;padding:24px 16px 48px}
+  h1{font-size:26px;margin:4px 0 2px;letter-spacing:-.5px}
+  .sub{color:var(--muted);margin:0 0 20px;font-size:14px}
+  .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none}
+  .tab{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--text);
+    padding:8px 14px;border-radius:999px;font-size:14px;cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+  .card h2{font-size:16px;margin:0 0 4px}
+  .hint{color:var(--muted);font-size:13px;margin:0 0 12px}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+  input[type=text],input[type=date]{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);
+    background:transparent;color:var(--text);font-size:16px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .chip{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:999px;
+    padding:5px 10px;font-size:13px;cursor:pointer}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{width:100%;margin-top:14px;padding:14px;border:0;border-radius:12px;background:var(--accent);
+    color:var(--accent-ink);font-size:16px;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);font-weight:500}
+  .sets{display:flex;flex-direction:column;gap:10px}
+  .set{display:flex;align-items:center;gap:6px}
+  .set .tag{width:22px;color:var(--muted);font-size:13px;font-weight:700}
+  .ball{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#fff;
+    font-weight:800;font-size:15px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18);
+    animation:pop .35s ease both}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  .set .save{margin-left:auto;background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px}
+  .grid{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-top:8px}
+  .num{aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text);
+    font-size:13px;cursor:pointer;padding:0}
+  .num.in{background:var(--b5);color:#fff;border-color:var(--b5)}
+  .num.out{background:var(--b4);color:#fff;border-color:var(--b4);text-decoration:line-through}
+  .story{font-size:14px;margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--bg)}
+  .saved-item{display:flex;align-items:center;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+  .saved-item:first-child{border-top:0}
+  .saved-item .ball{width:30px;height:30px;font-size:12px;animation:none}
+  .saved-item small{color:var(--muted);margin-left:auto;font-size:11px}
+  .disclaimer{color:var(--muted);font-size:12px;text-align:center;margin-top:24px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);
+    padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🍀 행운번호 뽑기</h1>
+  <p class="sub">꿈, 생일, 오늘 기분으로 나만의 번호를 뽑아보세요</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-mode="dream" aria-selected="true">🌙 꿈해몽</button>
+    <button class="tab" role="tab" data-mode="birth" aria-selected="false">🎂 생년월일</button>
+    <button class="tab" role="tab" data-mode="mood" aria-selected="false">😊 오늘의 기분</button>
+    <button class="tab" role="tab" data-mode="random" aria-selected="false">🎲 완전 랜덤</button>
+  </div>
+
+  <section class="card">
+    <div data-panel="dream">
+      <h2>어젯밤 무슨 꿈을 꿨나요?</h2>
+      <p class="hint">키워드를 입력하면 꿈에 맞는 번호를 뽑아드려요</p>
+      <input type="text" id="dreamInput" placeholder="예: 돼지, 용, 돌아가신 할머니">
+      <div class="chips" id="dreamChips"></div>
+    </div>
+    <div data-panel="birth" hidden>
+      <h2>나의 행운번호</h2>
+      <p class="hint">같은 생일, 같은 날짜엔 같은 번호가 나와요</p>
+      <label for="birthInput">생년월일</label>
+      <input type="date" id="birthInput">
+      <label for="nameInput">이름 (선택)</label>
+      <input type="text" id="nameInput" placeholder="홍길동">
+    </div>
+    <div data-panel="mood" hidden>
+      <h2>오늘 기분은 어때요?</h2>
+      <p class="hint">기분을 고르면 오늘 하루의 번호를 뽑아드려요</p>
+      <div class="chips" id="moodChips"></div>
+    </div>
+    <div data-panel="random" hidden>
+      <h2>완전 랜덤</h2>
+      <p class="hint">아무 조건 없이 무작위로 뽑아요</p>
+    </div>
+
+    <details style="margin-top:14px">
+      <summary style="cursor:pointer;font-size:14px">⚙️ 고정수 / 제외수 설정</summary>
+      <p class="hint" style="margin-top:8px">한 번 누르면 <b style="color:var(--b5)">고정</b>, 두 번 누르면 <b>제외</b>, 세 번 누르면 해제돼요</p>
+      <div class="grid" id="numGrid"></div>
+      <div class="row" style="margin-top:10px">
+        <label style="margin:0"><input type="checkbox" id="balanceOdd" checked> 홀짝 균형 맞추기</label>
+      </div>
+    </details>
+
+    <button class="btn" id="goBtn">번호 5세트 뽑기</button>
+    <p class="story" id="story" hidden></p>
+  </section>
+
+  <section class="card" id="resultCard" hidden>
+    <h2>오늘의 번호</h2>
+    <div class="sets" id="sets"></div>
+    <button class="btn ghost" id="shareBtn">📤 친구에게 공유하기</button>
+  </section>
+
+  <section class="card">
+    <h2>⭐ 저장한 번호</h2>
+    <div id="saved"><p class="hint">번호 옆 ☆를 누르면 여기에 저장돼요</p></div>
+  </section>
+
+  <p class="disclaimer">
+    재미로 즐기는 번호 생성기예요. 로또는 매 회차 완전히 무작위로 추첨되므로
+    어떤 방법으로 뽑아도 당첨 확률은 같아요. 복권은 적당히 즐겨주세요.<br>
+    도박 문제 상담: 한국도박문제예방치유원 ☎ 1336
+  </p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const DREAMS = {
+    "돼지":[8,18,28],"용":[5,15,35],"뱀":[7,17,27],"똥":[3,13,33],"불":[9,19,29],
+    "물":[1,11,21],"조상님":[4,24,44],"돈":[10,20,40],"호랑이":[6,26,36],"이빨 빠짐":[2,22,42],
+    "아기":[12,23,34],"금":[14,25,45],"하늘 날기":[16,31,38],"연예인":[30,37,41]
+  };
+  const MOODS = {
+    "😆 신남":[7,21,33],"😌 평온":[2,14,40],"😴 피곤":[11,26,39],"🔥 의욕충만":[9,18,45],
+    "🥲 우울":[4,16,30],"💘 설렘":[3,12,25],"😤 화남":[13,29,44],"🤔 고민중":[6,22,37]
+  };
+
+  // 문자열을 시드로 쓰는 결정적 난수 (같은 입력 → 같은 결과)
+  function hash(str){ let h=1779033703^str.length;
+    for(let i=0;i<str.length;i++){ h=Math.imul(h^str.charCodeAt(i),3432918353); h=h<<13|h>>>19; }
+    return () => { h=Math.imul(h^h>>>16,2246822507); h=Math.imul(h^h>>>13,3266489909); return (h^=h>>>16)>>>0; };
+  }
+  function rng(seed){ let a = seed===undefined ? (crypto.getRandomValues(new Uint32Array(1))[0]) : seed;
+    return () => { a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a);
+      t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; };
+  }
+
+  const state = { mode:"dream", fixed:new Set(), excluded:new Set(), mood:null, sets:[] };
+
+  function pickSet(rand, seeds){
+    for(let attempt=0; attempt<200; attempt++){
+      const pick = new Set([...state.fixed].slice(0,6));
+      const pool = [];
+      for(let n=1;n<=45;n++) if(!pick.has(n) && !state.excluded.has(n)) pool.push(n);
+      const hints = (seeds||[]).filter(n => pool.includes(n));
+      // 테마 번호 중 1~2개를 우선 넣어 '꿈 번호' 느낌을 살림
+      const take = Math.min(hints.length, 1 + Math.floor(rand()*2), 6 - pick.size);
+      for(let i=0;i<take;i++){ const k=Math.floor(rand()*hints.length); pick.add(hints.splice(k,1)[0]); }
+      const rest = pool.filter(n => !pick.has(n));
+      while(pick.size<6 && rest.length){ const k=Math.floor(rand()*rest.length); pick.add(rest.splice(k,1)[0]); }
+      const arr=[...pick].sort((a,b)=>a-b);
+      if(arr.length<6) return arr;
+      if(!$("#balanceOdd").checked) return arr;
+      const odd = arr.filter(n=>n%2).length;
+      if(odd>=2 && odd<=4) return arr;
+    }
+    return [];
+  }
+
+  function color(n){ return n<=10?"var(--b1)":n<=20?"var(--b2)":n<=30?"var(--b3)":n<=40?"var(--b4)":"var(--b5)"; }
+  function ballHTML(n,i){ return `<span class="ball" style="background:${color(n)};animation-delay:${i*60}ms">${n}</span>`; }
+
+  function generate(){
+    const today = new Date().toISOString().slice(0,10);
+    let rand, seeds=[], story="";
+    if(state.mode==="dream"){
+      const kw = $("#dreamInput").value.trim();
+      if(!kw){ toast("꿈 키워드를 입력하거나 골라주세요"); return; }
+      seeds = DREAMS[kw] || [];
+      const h = hash(kw+today);
+      if(!seeds.length) seeds=[h()%45+1,h()%45+1,h()%45+1];
+      rand = rng(hash(kw+today+Date.now())());
+      story = `🌙 "${kw}" 꿈의 기운이 담긴 번호 ${[...new Set(seeds)].join(", ")}을(를) 우선으로 넣었어요.`;
+    } else if(state.mode==="birth"){
+      const b = $("#birthInput").value;
+      if(!b){ toast("생년월일을 입력해주세요"); return; }
+      const name = $("#nameInput").value.trim();
+      const h = hash(b+name+today);
+      seeds=[h()%45+1,h()%45+1,h()%45+1];
+      rand = rng(hash(b+name+today)());
+      const [y,m,d]=b.split("-").map(Number);
+      story = `🎂 ${name?name+"님의 ":""}오늘의 행운수는 ${(m+d)%45||45}번! 오늘 하루 같은 번호가 나와요.`;
+      seeds.push((m+d)%45||45);
+    } else if(state.mode==="mood"){
+      if(!state.mood){ toast("오늘 기분을 골라주세요"); return; }
+      seeds = MOODS[state.mood];
+      rand = rng();
+      story = `${state.mood.split(" ")[0]} 오늘 같은 기분엔 ${seeds.join(", ")}번이 어울려요.`;
+    } else {
+      rand = rng();
+      story = "🎲 아무 조건 없이 순수하게 무작위로 뽑았어요.";
+    }
+    state.sets = Array.from({length:5}, () => pickSet(rand, seeds));
+    if(state.sets.some(s=>s.length<6)){ toast("제외수가 너무 많아요. 설정을 줄여주세요"); return; }
+    renderSets(); $("#story").textContent=story; $("#story").hidden=false;
+  }
+
+  function renderSets(){
+    const labels="ABCDE";
+    $("#sets").innerHTML = state.sets.map((s,i)=>
+      `<div class="set"><span class="tag">${labels[i]}</span>${s.map(ballHTML).join("")}
+       <button class="save" data-i="${i}" aria-label="저장">☆</button></div>`).join("");
+    $("#resultCard").hidden=false;
+    $("#resultCard").scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+
+  // 저장 (브라우저에만 저장)
+  function loadSaved(){ try{ return JSON.parse(localStorage.getItem("lotto-saved")||"[]"); }catch{ return []; } }
+  function storeSaved(list){ try{ localStorage.setItem("lotto-saved",JSON.stringify(list.slice(0,30))); }catch{} }
+  function renderSaved(){
+    const list = loadSaved();
+    $("#saved").innerHTML = list.length ? list.map(x=>
+      `<div class="saved-item">${x.n.map(n=>`<span class="ball" style="background:${color(n)}">${n}</span>`).join("")}<small>${x.d}</small></div>`).join("")
+      : `<p class="hint">번호 옆 ☆를 누르면 여기에 저장돼요</p>`;
+  }
+
+  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1800); }
+
+  // UI 연결
+  document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
+    state.mode=tab.dataset.mode;
+    document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected", t===tab));
+    document.querySelectorAll("[data-panel]").forEach(p=>p.hidden = p.dataset.panel!==state.mode);
+    $("#story").hidden=true;
+  }));
+  $("#dreamChips").innerHTML = Object.keys(DREAMS).map(k=>`<button class="chip">${k}</button>`).join("");
+  $("#dreamChips").addEventListener("click",e=>{ if(e.target.classList.contains("chip")) $("#dreamInput").value=e.target.textContent; });
+  $("#moodChips").innerHTML = Object.keys(MOODS).map(k=>`<button class="chip">${k}</button>`).join("");
+  $("#moodChips").addEventListener("click",e=>{
+    if(!e.target.classList.contains("chip")) return;
+    state.mood=e.target.textContent;
+    $("#moodChips").querySelectorAll(".chip").forEach(c=>{ const on=c===e.target; c.style.background=on?"var(--text)":""; c.style.color=on?"var(--bg)":""; });
+  });
+  $("#numGrid").innerHTML = Array.from({length:45},(_,i)=>`<button class="num" data-n="${i+1}">${i+1}</button>`).join("");
+  $("#numGrid").addEventListener("click",e=>{
+    const n=+e.target.dataset.n; if(!n) return;
+    if(state.fixed.has(n)){ state.fixed.delete(n); state.excluded.add(n); e.target.className="num out"; }
+    else if(state.excluded.has(n)){ state.excluded.delete(n); e.target.className="num"; }
+    else { if(state.fixed.size>=5){ toast("고정수는 최대 5개까지예요"); return; } state.fixed.add(n); e.target.className="num in"; }
+  });
+  $("#goBtn").addEventListener("click",generate);
+  $("#sets").addEventListener("click",e=>{
+    if(!e.target.classList.contains("save")) return;
+    const s=state.sets[+e.target.dataset.i]; const list=loadSaved();
+    list.unshift({n:s,d:new Date().toLocaleDateString("ko-KR")}); storeSaved(list); renderSaved();
+    e.target.textContent="★"; toast("저장했어요");
+  });
+  $("#shareBtn").addEventListener("click",async()=>{
+    const text = "🍀 내 행운번호\n" + state.sets.map((s,i)=>"ABCDE"[i]+": "+s.join(" ")).join("\n") + "\n\n" + location.href;
+    try{ if(navigator.share){ await navigator.share({title:"행운번호 뽑기",text}); return; } }catch{ return; }
+    try{ await navigator.clipboard.writeText(text); toast("복사했어요! 친구에게 붙여넣기 하세요"); }catch{ toast("공유를 지원하지 않는 브라우저예요"); }
+  });
+  renderSaved();
+})();
+</script>
+</body>
+</html>
