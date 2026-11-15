@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수능 응원 타로</title>
+<meta name="description" content="카드 3장으로 보는 나의 수능 응원 타로. 친구와 가족에게 응원 카드를 보내보세요.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="🔮 수능 응원 타로 — 카드 3장 뽑아보세요">
+<meta property="og:description" content="실력 카드, 행운 카드, 응원 메시지까지. 수험생에게 응원 카드를 보내보세요!">
+<style>
+  :root{
+    --bg:#0f1530; --bg2:#1a2250; --card:#ffffff10; --line:#ffffff22;
+    --text:#f5f3ee; --muted:#b9bdd6; --gold:#f2c75c; --gold-ink:#2a1d00; --pink:#ff8fab;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{min-height:100vh;color:var(--text);
+    background:radial-gradient(1200px 600px at 50% -10%, #2b3b8f 0%, transparent 60%), linear-gradient(180deg,var(--bg),var(--bg2));
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+    line-height:1.55}
+  .wrap{max-width:520px;margin:0 auto;padding:24px 16px 56px}
+  .dday{display:inline-block;background:var(--gold);color:var(--gold-ink);font-weight:800;font-size:13px;
+    padding:4px 10px;border-radius:999px}
+  h1{font-size:30px;margin:10px 0 4px;letter-spacing:-.8px}
+  .sub{color:var(--muted);margin:0 0 22px;font-size:15px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;
+    backdrop-filter:blur(6px)}
+  .panel h2{font-size:17px;margin:0 0 4px}
+  .hint{color:var(--muted);font-size:13px;margin:0 0 12px}
+  .seg{display:flex;background:#00000033;border-radius:12px;padding:4px;margin-bottom:16px}
+  .seg button{flex:1;border:0;background:transparent;color:var(--muted);padding:10px;border-radius:9px;font-size:15px;cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink);font-weight:700}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+  input[type=text]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#00000030;
+    color:var(--text);font-size:16px}
+  input::placeholder{color:#8a8fb0}
+  .btn{display:block;width:100%;margin-top:14px;padding:15px;border:0;border-radius:12px;background:var(--gold);
+    color:var(--gold-ink);font-size:16px;font-weight:800;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);font-weight:600}
+  .btn:disabled{opacity:.45;cursor:default}
+  .deck{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+  .tcard{aspect-ratio:2/3;border-radius:12px;border:1px solid #f2c75c66;cursor:pointer;position:relative;
+    background:repeating-linear-gradient(45deg,#24307a 0 10px,#1d2766 10px 20px);
+    display:grid;place-items:center;font-size:26px;transition:transform .2s, box-shadow .2s;
+    animation:deal .4s ease both}
+  .tcard::after{content:"✦";color:var(--gold);opacity:.8}
+  .tcard:hover{transform:translateY(-4px)}
+  .tcard.picked{transform:translateY(-6px);box-shadow:0 0 0 2px var(--gold),0 8px 24px #f2c75c55}
+  .tcard.picked::before{content:attr(data-order);position:absolute;top:6px;left:8px;font-size:12px;font-weight:800;
+    color:var(--gold)}
+  @keyframes deal{from{opacity:0;transform:translateY(12px) rotate(-4deg)}to{opacity:1;transform:none}}
+  .pickcount{text-align:center;color:var(--muted);font-size:14px;margin-top:10px}
+  .result-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 14px}
+  .rc{border-radius:12px;padding:12px 6px;text-align:center;background:linear-gradient(180deg,#fff8e6,#f3e2b5);
+    color:#2a1d00;animation:flip .5s ease both}
+  .rc .pos{font-size:11px;font-weight:700;opacity:.65}
+  .rc .em{font-size:34px;margin:4px 0}
+  .rc .nm{font-weight:800;font-size:14px}
+  .rc .kw{font-size:11px;opacity:.75}
+  @keyframes flip{from{transform:rotateY(90deg);opacity:0}to{transform:none;opacity:1}}
+  .reading{border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
+  .reading p{margin:0 0 12px;font-size:15px}
+  .reading b{color:var(--gold)}
+  .lucky{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+  .lucky div{background:#00000030;border-radius:10px;padding:10px;font-size:13px}
+  .lucky span{display:block;color:var(--muted);font-size:11px}
+  .cheer{font-size:18px;font-weight:800;text-align:center;margin:16px 0 4px;color:var(--pink)}
+  .from{background:#ff8fab22;border:1px solid #ff8fab55;border-radius:14px;padding:14px;margin-bottom:14px;font-size:15px}
+  .row2{display:flex;gap:8px}
+  .row2 .btn{margin-top:10px}
+  .note{color:var(--muted);font-size:12px;text-align:center;margin-top:22px}
+  .note a{color:var(--muted)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);
+    padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+  .toast.show{opacity:1}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="dday" id="dday">수능 D-?</span>
+  <h1>🔮 수능 응원 타로</h1>
+  <p class="sub" id="subline">마음을 가다듬고 카드 3장을 골라보세요</p>
+
+  <!-- 응원 링크로 들어온 경우 -->
+  <div class="from" id="fromBox" hidden></div>
+
+  <section class="panel" id="setup">
+    <div class="seg" role="group">
+      <button type="button" data-mode="self" aria-pressed="true">🙋 내 타로 보기</button>
+      <button type="button" data-mode="cheer" aria-pressed="false">💌 응원 카드 보내기</button>
+    </div>
+
+    <div data-for="self">
+      <label for="myName">이름 (선택)</label>
+      <input type="text" id="myName" maxlength="10" placeholder="예: 김수능">
+    </div>
+    <div data-for="cheer" hidden>
+      <p class="hint">수험생에게 보낼 응원 타로 링크를 만들어요. 받은 사람이 카드를 직접 뽑게 돼요.</p>
+      <label for="toName">받는 사람 (수험생)</label>
+      <input type="text" id="toName" maxlength="10" placeholder="예: 우리 딸 지민이">
+      <label for="fromName">보내는 사람</label>
+      <input type="text" id="fromName" maxlength="10" placeholder="예: 엄마">
+      <label for="fromMsg">한마디 (선택)</label>
+      <input type="text" id="fromMsg" maxlength="40" placeholder="예: 지금까지 정말 잘했어, 사랑해!">
+      <button class="btn" id="makeLink">💌 응원 링크 만들기</button>
+    </div>
+  </section>
+
+  <section class="panel" id="pickPanel">
+    <h2>카드 3장을 골라주세요</h2>
+    <p class="hint">첫 번째는 <b>실력</b>, 두 번째는 <b>행운</b>, 세 번째는 <b>응원 메시지</b> 카드예요</p>
+    <div class="deck" id="deck"></div>
+    <div class="pickcount" id="pickCount">0 / 3</div>
+    <button class="btn" id="revealBtn" disabled>🔮 결과 보기</button>
+  </section>
+
+  <section class="panel" id="resultPanel" hidden>
+    <h2 id="resultTitle">타로 결과</h2>
+    <div class="result-cards" id="resultCards"></div>
+    <div class="reading" id="reading"></div>
+    <div class="lucky" id="lucky"></div>
+    <div class="cheer" id="cheerLine"></div>
+    <div class="row2">
+      <button class="btn" id="saveImg">📸 이미지 저장</button>
+      <button class="btn ghost" id="shareBtn">📤 공유하기</button>
+    </div>
+    <button class="btn ghost" id="toCheer">💌 친구에게도 응원 카드 보내기</button>
+    <button class="btn ghost" id="again">🔄 다시 뽑기</button>
+  </section>
+
+  <p class="note">
+    이 타로는 수험생을 응원하기 위한 재미용 콘텐츠예요. 결과는 모두 응원의 마음을 담았어요.<br>
+    시험 준비로 마음이 힘들다면 청소년상담 ☎ 1388에서 이야기 나눌 수 있어요.<br>
+    <a href="../">🍀 행운번호 뽑기도 해보기</a>
+  </p>
+</div>
+<div class="toast" id="toast"></div>
+<canvas id="cv" width="1080" height="1920" hidden></canvas>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const EXAM = new Date(2026, 10, 19); // 2026-11-19 (목)
+
+  // 모든 카드는 긍정/응원 메시지만 담는다
+  const CARDS = [
+    {nm:"태양",em:"☀️",kw:"자신감",
+      skill:"지금까지 쌓아온 실력이 환하게 빛날 때예요. 아는 문제는 망설이지 말고 자신 있게 고르세요.",
+      luck:"시험장 공기가 유난히 맑게 느껴질 거예요. 첫 교시를 잘 풀면 그 기운이 끝까지 이어져요.",
+      msg:"너는 이미 충분히 빛나고 있어. 결과와 상관없이 지금까지의 너는 정말 멋졌어."},
+    {nm:"별",em:"⭐",kw:"희망",
+      skill:"꾸준히 해온 공부가 별처럼 하나씩 이어져요. 처음 보는 문제도 아는 개념으로 풀 수 있어요.",
+      luck:"헷갈리는 문제에서 좋은 직감이 찾아와요. 처음 고른 답을 믿어보세요.",
+      msg:"긴 밤을 버틴 너에게 이제 별이 뜰 차례야."},
+    {nm:"마법사",em:"🪄",kw:"집중력",
+      skill:"필요한 공식과 개념이 손끝에서 바로 떠올라요. 집중력이 최고조에 달하는 카드예요.",
+      luck:"시간 배분이 마법처럼 맞아떨어져요. 검토할 시간도 충분히 남을 거예요.",
+      msg:"네 안에는 이미 답을 찾는 힘이 있어. 그걸 믿기만 하면 돼."},
+    {nm:"전차",em:"🏇",kw:"추진력",
+      skill:"막히는 문제는 과감히 넘기고 앞으로 나아가는 힘이 있어요. 흐름을 끊지 않는 게 핵심이에요.",
+      luck:"어려운 문제가 나와도 다른 수험생들도 똑같이 어려워해요. 흔들리지 않는 사람이 이겨요.",
+      msg:"여기까지 달려온 것만으로도 대단해. 마지막 한 걸음만 더!"},
+    {nm:"힘",em:"🦁",kw:"평정심",
+      skill:"긴장되는 순간에도 차분하게 문제를 읽어낼 수 있어요. 문제를 끝까지 읽는 습관이 점수를 지켜줘요.",
+      luck:"쉬는 시간마다 마음이 금방 정돈돼요. 지난 교시는 잊고 다음 교시에 집중할 수 있어요.",
+      msg:"떨리는 건 그만큼 열심히 했다는 증거야. 숨 한 번 크게 쉬고, 할 수 있어."},
+    {nm:"세계",em:"🌍",kw:"완성",
+      skill:"그동안 공부한 조각들이 하나로 맞춰지는 카드예요. 마지막 정리가 빛을 발해요.",
+      luck:"시험이 끝나는 순간 홀가분한 마음이 찾아와요. 좋은 소식이 기다리고 있어요.",
+      msg:"긴 여정의 마지막 페이지야. 어떤 결과든 너의 세상은 이제부터 더 넓어질 거야."},
+    {nm:"달",em:"🌙",kw:"직감",
+      skill:"애매한 선택지 사이에서 날카로운 직감이 작동해요. 소거법으로 차근차근 좁혀가세요.",
+      luck:"밤에 푹 자면 다음 날 컨디션이 최고예요. 오늘은 일찍 잠자리에 드는 게 행운이에요.",
+      msg:"불안한 마음도 괜찮아. 그 마음까지 안고 여기까지 온 네가 자랑스러워."},
+    {nm:"여황제",em:"👑",kw:"여유",
+      skill:"여유로운 마음이 실수를 막아줘요. 마킹 확인까지 꼼꼼하게 할 수 있는 카드예요.",
+      luck:"주변의 응원이 큰 힘이 되어 돌아와요. 오늘 받은 응원 메시지를 한 번 더 읽어보세요.",
+      msg:"넌 사랑받고 있어. 그 사실만 기억하고 편하게 다녀와."},
+    {nm:"운명의 수레바퀴",em:"🎡",kw:"전환점",
+      skill:"공부해온 흐름이 상승세를 타고 있어요. 모의고사보다 실전에서 더 잘하는 타입이에요.",
+      luck:"찍은 문제도 웃어주는 날이에요. 다만 끝까지 풀어보고 나서요!",
+      msg:"인생의 바퀴가 좋은 방향으로 돌고 있어. 이 시험은 그 시작일 뿐이야."},
+    {nm:"교황",em:"📜",kw:"기본기",
+      skill:"기본 개념이 탄탄해서 응용문제도 흔들리지 않아요. 아는 것부터 확실하게 챙기세요.",
+      luck:"평소 쓰던 필기구, 평소 먹던 음식이 가장 큰 행운을 가져와요.",
+      msg:"성실하게 쌓아온 시간은 절대 배신하지 않아. 그 시간을 믿어."},
+    {nm:"연인",em:"💞",kw:"조화",
+      skill:"국어·수학·영어·탐구가 고르게 균형을 이뤄요. 한 과목이 어려워도 다른 과목이 받쳐줘요.",
+      luck:"시험장에서 마주친 친구의 한마디가 긴장을 풀어줘요.",
+      msg:"너를 응원하는 사람이 정말 많아. 혼자가 아니야."},
+    {nm:"절제",em:"🫖",kw:"컨디션",
+      skill:"컨디션 관리가 곧 실력이 되는 날이에요. 점심은 가볍게, 물은 조금씩 마시세요.",
+      luck:"따뜻한 차 한 잔이 행운을 불러와요. 보온병을 챙기면 좋아요.",
+      msg:"무리하지 말고 너답게만 하면 충분해."},
+  ];
+  const LUCKY = {
+    item:["컴퓨터용 사인펜","손난로","보온병 보리차","찹쌀떡","초콜릿 한 조각","평소 쓰던 손목시계","부모님 손편지","포근한 목도리"],
+    color:["포근한 베이지","행운의 노랑","차분한 남색","따뜻한 주황","맑은 하늘색","새싹 연두"],
+    subject:["국어","수학","영어","한국사","탐구"],
+    words:["찍어도 정답","시험은 실력, 결과는 대박","평소처럼만","끝까지 침착하게","너는 해낼 거야","수능 대박 기원"]
+  };
+
+  // 이름 + 날짜로 같은 결과가 나오는 난수 (이름이 없으면 매번 랜덤)
+  function seeded(str){
+    let h=2166136261; for(const c of str){ h^=c.charCodeAt(0); h=Math.imul(h,16777619); }
+    return () => { h+=0x6D2B79F5; let t=h; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; };
+  }
+  // 받침에 따라 조사 고르기: josa("엄마","이","가") → 엄마가
+  function josa(w,a,b){ const c=w.charCodeAt(w.length-1); if(c<0xAC00||c>0xD7A3) return w+a+"("+b+")"; return w+((c-0xAC00)%28?a:b); }
+  const state = { mode:"self", picked:[], result:null, name:"", from:null };
+  const params = new URLSearchParams(location.search);
+
+  // D-day
+  (function(){
+    const today = new Date(); today.setHours(0,0,0,0);
+    const d = Math.round((EXAM - today)/86400000);
+    const el=$("#dday");
+    if(d>0) el.textContent=`수능 D-${d}`;
+    else if(d===0){ el.textContent="수능 D-DAY 🔥"; $("#subline").textContent="오늘 시험 보는 모든 수험생을 응원해요"; }
+    else { el.textContent="수능 끝! 수고했어요 🎉"; $("#subline").textContent="수능은 끝났어요. 이제 합격운을 확인해볼까요?"; }
+  })();
+
+  // 응원 링크로 들어온 경우
+  const to = params.get("to"), fr = params.get("from"), fm = params.get("msg");
+  if(to){
+    state.from={to,fr,fm}; state.name=to;
+    const box=$("#fromBox"); box.hidden=false;
+    box.textContent = `💌 ${josa(fr||"누군가","이","가")} ${to}에게 수능 응원 타로를 보냈어요!` + (fm?`\n“${fm}”`:"");
+    box.style.whiteSpace="pre-line";
+    $("#setup").hidden=true;
+  }
+
+  function dealDeck(){
+    state.picked=[];
+    $("#deck").innerHTML = Array.from({length:9},(_,i)=>`<div class="tcard" role="button" tabindex="0" data-i="${i}" style="animation-delay:${i*40}ms"></div>`).join("");
+    updatePick();
+  }
+  function updatePick(){
+    $("#pickCount").textContent=`${state.picked.length} / 3`;
+    $("#revealBtn").disabled = state.picked.length<3;
+    document.querySelectorAll(".tcard").forEach(c=>{
+      const k=state.picked.indexOf(+c.dataset.i);
+      c.classList.toggle("picked",k>=0); c.dataset.order = k>=0 ? ["실력","행운","메시지"][k] : "";
+    });
+  }
+  $("#deck").addEventListener("click",e=>{
+    const c=e.target.closest(".tcard"); if(!c) return;
+    const i=+c.dataset.i, k=state.picked.indexOf(i);
+    if(k>=0) state.picked.splice(k,1); else if(state.picked.length<3) state.picked.push(i);
+    updatePick();
+  });
+  $("#deck").addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); e.target.click(); } });
+
+  function reveal(){
+    const name = state.from ? state.from.to : $("#myName").value.trim();
+    state.name=name;
+    const today=new Date().toDateString();
+    const rand = name ? seeded(name+today+state.picked.join(",")) : Math.random;
+    const pool=[...CARDS]; const pick=[];
+    for(let i=0;i<3;i++) pick.push(pool.splice(Math.floor(rand()*pool.length),1)[0]);
+    const r = (a)=>a[Math.floor(rand()*a.length)];
+    state.result = { cards:pick, item:r(LUCKY.item), color:r(LUCKY.color), subject:r(LUCKY.subject), words:r(LUCKY.words) };
+    renderResult();
+  }
+
+  function renderResult(){
+    const {cards,item,color,subject,words}=state.result, n=state.name;
+    const pos=["🧠 실력","🍀 행운","💌 메시지"];
+    $("#resultTitle").textContent = n ? `${n}의 수능 응원 타로` : "나의 수능 응원 타로";
+    $("#resultCards").innerHTML = cards.map((c,i)=>
+      `<div class="rc" style="animation-delay:${i*150}ms"><div class="pos">${pos[i]}</div><div class="em">${c.em}</div><div class="nm">${c.nm}</div><div class="kw">#${c.kw}</div></div>`).join("");
+    $("#reading").innerHTML =
+      `<p><b>🧠 실력 · ${cards[0].nm}</b><br>${cards[0].skill}</p>`+
+      `<p><b>🍀 행운 · ${cards[1].nm}</b><br>${cards[1].luck}</p>`+
+      `<p><b>💌 메시지 · ${cards[2].nm}</b><br>${cards[2].msg}</p>`;
+    $("#lucky").innerHTML =
+      `<div><span>행운의 아이템</span>${item}</div><div><span>행운의 색</span>${color}</div>`+
+      `<div><span>자신감 과목</span>${subject}</div><div><span>오늘의 주문</span>${words}</div>`;
+    $("#cheerLine").textContent = state.from && state.from.fr ? `${josa(state.from.fr,"이","가")} 응원해요! 수능 대박 🎉` : "수능 대박 🎉";
+    $("#pickPanel").hidden=true; $("#resultPanel").hidden=false;
+    $("#resultPanel").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  // 스토리용 이미지 (1080x1920)
+  function drawImage(){
+    const cv=$("#cv"), x=cv.getContext("2d"), W=1080, H=1920, {cards,item,words}=state.result;
+    const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,"#2b3b8f"); g.addColorStop(1,"#0f1530");
+    x.fillStyle=g; x.fillRect(0,0,W,H);
+    x.fillStyle="#ffffff22"; for(let i=0;i<70;i++){ const sx=(i*137)%W, sy=(i*251)%900; x.beginPath(); x.arc(sx,sy,(i%3)+2,0,7); x.fill(); }
+    const F='"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif';
+    x.textAlign="center";
+    x.fillStyle="#f2c75c"; x.font=`800 44px ${F}`; x.fillText($("#dday").textContent,W/2,230);
+    x.fillStyle="#f5f3ee"; x.font=`800 84px ${F}`;
+    x.fillText(state.name?`${state.name}의`:"나의",W/2,350); x.fillText("수능 응원 타로",W/2,450);
+    const cw=280,ch=420,gap=40,sx=(W-(cw*3+gap*2))/2, top=560, pos=["실력","행운","메시지"];
+    cards.forEach((c,i)=>{
+      const cx=sx+i*(cw+gap);
+      x.fillStyle="#f8eccb"; roundRect(x,cx,top,cw,ch,28); x.fill();
+      x.fillStyle="#2a1d00"; x.font=`700 34px ${F}`; x.fillText(pos[i],cx+cw/2,top+70);
+      x.font=`120px ${F}`; x.fillText(c.em,cx+cw/2,top+230);
+      x.font=`800 40px ${F}`; x.fillText(c.nm.length>5?c.nm.slice(0,5):c.nm,cx+cw/2,top+320);
+      x.font=`500 30px ${F}`; x.fillStyle="#6b5420"; x.fillText("#"+c.kw,cx+cw/2,top+370);
+    });
+    x.fillStyle="#f5f3ee"; x.font=`500 40px ${F}`;
+    wrap(x,"“"+cards[2].msg+"”",W/2,1150,880,62);
+    x.fillStyle="#ffffff18"; roundRect(x,140,1420,800,170,30); x.fill();
+    x.fillStyle="#b9bdd6"; x.font=`500 32px ${F}`; x.fillText("행운의 아이템",W/2,1480);
+    x.fillStyle="#f2c75c"; x.font=`800 48px ${F}`; x.fillText(item,W/2,1550);
+    x.fillStyle="#ff8fab"; x.font=`800 60px ${F}`; x.fillText(words+" 🎉",W/2,1700);
+    x.fillStyle="#b9bdd6"; x.font=`500 30px ${F}`; x.fillText("🔮 "+location.host+location.pathname,W/2,1840);
+    return new Promise(res=>cv.toBlob(res,"image/png"));
+  }
+  function roundRect(x,a,b,w,h,r){ x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,r); x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+  function wrap(x,t,cx,y,max,lh){ let line=""; for(const ch of t){ if(x.measureText(line+ch).width>max){ x.fillText(line,cx,y); line=ch; y+=lh; } else line+=ch; } x.fillText(line,cx,y); }
+
+  async function saveImage(){
+    const blob=await drawImage(); const file=new File([blob],"수능응원타로.png",{type:"image/png"});
+    try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:"수능 응원 타로"}); return; } }catch(e){ if(e.name==="AbortError") return; }
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="수능응원타로.png"; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000); toast("이미지를 저장했어요. 스토리에 올려보세요!");
+  }
+  async function share(url, text){
+    try{ if(navigator.share){ await navigator.share({title:"수능 응원 타로",text,url}); return; } }catch(e){ return; }
+    try{ await navigator.clipboard.writeText(text+"\n"+url); toast("링크를 복사했어요! 카톡에 붙여넣기 하세요"); }
+    catch{ prompt("아래 링크를 복사하세요",url); }
+  }
+  function baseUrl(){ return location.origin+location.pathname; }
+  function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2000); }
+
+  function setMode(m){
+    state.mode=m;
+    document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));
+    document.querySelectorAll("[data-for]").forEach(el=>el.hidden=el.dataset.for!==m);
+    $("#pickPanel").hidden = m==="cheer"; $("#resultPanel").hidden=true;
+  }
+  document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+
+  $("#makeLink").addEventListener("click",()=>{
+    const to=$("#toName").value.trim(), fr=$("#fromName").value.trim(), msg=$("#fromMsg").value.trim();
+    if(!to){ toast("받는 사람 이름을 써주세요"); return; }
+    const q=new URLSearchParams({to}); if(fr) q.set("from",fr); if(msg) q.set("msg",msg);
+    share(baseUrl()+"?"+q.toString(), `💌 ${to}에게 수능 응원 타로가 도착했어요! 카드 3장을 뽑아보세요 🔮`);
+  });
+  $("#revealBtn").addEventListener("click",reveal);
+  $("#saveImg").addEventListener("click",saveImage);
+  $("#shareBtn").addEventListener("click",()=>share(baseUrl(), `🔮 나 수능 응원 타로 뽑았는데 "${state.result.cards[0].nm}" 카드 나옴! 너도 해봐`));
+  $("#toCheer").addEventListener("click",()=>{
+    if(state.from){ location.href=baseUrl(); return; }
+    setMode("cheer"); window.scrollTo({top:0,behavior:"smooth"});
+  });
+  $("#again").addEventListener("click",()=>{ $("#resultPanel").hidden=true; $("#pickPanel").hidden=false; dealDeck(); $("#pickPanel").scrollIntoView({behavior:"smooth"}); });
+
+  dealDeck();
+})();
+</script>
+</body>
+</html>
